@@ -1,0 +1,12 @@
+Mic Framework is a REST inspired PHP framework. (I would not call it RESTful or it being a PHP REST framework, since I am not Roy Fielding. :) )
+
+This project was started after being interested on REST and mainly based on the idea of Paul James. http://www.peej.co.uk/articles/rmr-architecture.html 
+(Summary: "scratching an itch")
+
+There is NO DOCUMENTATION yet. The framework is less than Alpha. Development is mainly done during free time.
+
+HOW TO: (For Apache):
+	- copy to a directory accessible by the web server.
+	- point all request at that directory to be handled by FrontController.php (a sample .htaccess is included)
+	- sample hello world is at [directory]/hello
+	- hopefully you will figure out the rest.
