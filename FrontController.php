@@ -1,4 +1,10 @@
 <?php
+/**
+ * The Front Controller. One Controller To Rule Them All.
+ * PHP processing starts here.
+ * @author enilehcim
+ *
+ */
 namespace Mic {
 
 use Mic\Settings;
@@ -8,9 +14,7 @@ use Mic\Library\System;
 require './Settings.php';
 
 $settings = new Settings();
-$systemFile = $settings->getMicDirectory() . DIRECTORY_SEPARATOR 
-			. 'library' . DIRECTORY_SEPARATOR . 'System.php';
-
+$systemFile = $settings->getSystemFilePath();
 require $systemFile;
 
 $system = System::getInstance($settings);

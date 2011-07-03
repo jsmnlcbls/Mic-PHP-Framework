@@ -10,6 +10,8 @@ class Settings
 	
 	protected $_basePath;
 	
+	protected $_systemFilePath;
+	
 	protected $_enableAutoloader;
 	
 	protected $_enableCache;
@@ -79,6 +81,17 @@ class Settings
 			$this->_basePath = str_replace(DIRECTORY_SEPARATOR, "/", $basePath);
 		}
 		return $this->_basePath;
+	}
+	
+	public function getSystemFilePath()
+	{
+		//if there is no system file path set, defaults to the System.php file
+		//in the library directory
+		if (!isset($this->_systemFilePath)) {
+			$this->_systemFilePath = $this->getMicDirectory() . DIRECTORY_SEPARATOR 
+								   . 'library' . DIRECTORY_SEPARATOR . 'System.php';
+		}
+		return $this->_systemFilePath;
 	}
 	
 	

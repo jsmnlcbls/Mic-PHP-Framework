@@ -23,7 +23,7 @@ namespace Mic\Interfaces;
 interface Uri
 {
 	/**
-	 * Returns the URI scheme. (HTTP usualy)
+	 * Returns the URI scheme
 	 * @return String
 	 */
 	public function getScheme();
