@@ -378,9 +378,10 @@ class System
 			
 			$this->_resource = $resource;
 			$this->_nextState = $this->_dispatchState;
+		} else {
+			$message = 'Resource can only be set at the start, route and pre-dispatch state.';
+			throw $this->_createInvalidStateException($message);
 		}
-		$message = 'Resource can only be set at the start, route and pre-dispatch state.';
-		throw $this->_createInvalidStateException($message);
 	}
 	
 	/**
