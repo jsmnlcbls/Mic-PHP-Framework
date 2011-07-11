@@ -1,3 +1,4 @@
+.gitignore
 .settings
 .buildpath
 .project
@@ -5,3 +6,4 @@ mic/todo
 mic/.settings
 mic/.buildpath
 mic/.project
+nbproject

@@ -58,6 +58,10 @@ class System
 	 */
 	protected $_response;
 	
+        /**
+         * Holds an instance of the resource
+         * @var Resource
+         */
 	protected $_resource;
 	
 	/**
@@ -175,13 +179,17 @@ class System
 	private function __construct(Settings $settings)
 	{
 		$this->_settings = $settings;
+                
+        //populate this array with the method names to be invoked
+        //for each corresponding state
 		$this->_stateMethod = array($this->_startState => '_startState',
-									$this->_routeState => '_routeState',
-									$this->_preDispatchState => '_preDispatchState',
-									$this->_dispatchState => '_dispatchState',
-									$this->_postDispatchState => '_postDispatchState',
-									$this->_outputState => '_outputState',
-									$this->_endState => '_endState');
+                                    $this->_routeState => '_routeState',
+                                    $this->_preDispatchState => '_preDispatchState',
+                                    $this->_dispatchState => '_dispatchState',
+                                    $this->_postDispatchState => '_postDispatchState',
+                                    $this->_outputState => '_outputState',
+                                    $this->_endState => '_endState');
+                
 		$this->_isRunning = false;
 		$this->_resetToStartState();
 		try {
@@ -194,8 +202,8 @@ class System
 	}
 
 	/**
-	 *	Returns the sole instance of this class 
-	 *	@return System
+	 * Returns the sole instance of this class 
+	 * @return System
 	 */
 	public static function getInstance(Settings $settings = null)
 	{		
@@ -387,7 +395,7 @@ class System
 	/**
 	 * Output a response immediately. 
 	 * @param Response $response
-	 * @throws LogicException if the system has already reached the end state
+	 * @throws InvalidStateException if the system has already reached the end state
 	 */
 	public function outputResponse(Response $response)
 	{
