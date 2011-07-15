@@ -26,40 +26,63 @@ use InvalidArgumentException;
 
 class Loader
 {
-	protected static $_baseDirectory;
+	/**
+	 * Holds the name of the directory containing the framework. (not the full path)
+	 * @var String 
+	 */
+	protected static $_frameworkDirectoryName;
 	
-	protected static $_baseDirectoryName;
+	/**
+	 * Holds the name of the directory containing the application(s). (not the full path)
+	 * @var String
+	 */
+	protected static $_applicationDirectoryName;
 	
-	private static $_loadedFiles;
+	/**
+	 * Holds the full path of the application directory.
+	 * @var String
+	 */
+	protected static $_applicationRootDirectory;
 	
-	public static function loadClass($className)
+	/**
+	 * Holds the full path of the framework directory.
+	 * @var String
+	 */
+	protected static $_frameworkRootDirectory;
+	
+	public static function loadFrameworkClass($className)
 	{
-		$namespace = explode("\\", $className);
+		$namespaceParts = explode("\\", $className);
+		$rootNamespace = array_shift($namespaceParts);
+			
+		if (!static::_isNamespaceMatchingDirectory($rootNamespace, 
+					static::$_frameworkDirectoryName)) {
+			return;
+		}	
 		
-		$rootNamespace = array_shift($namespace);
-		$class = array_pop($namespace);
-				
-		//proceed for loading only if the base directory specified when this
-		//loader was registered matches the root namespace
-		if (strcasecmp($rootNamespace, static::$_baseDirectoryName) != 0) {
-			//return;
-		}
-		
-		$namespace = implode(DIRECTORY_SEPARATOR, $namespace);
-		$subDirectory = strtolower($namespace);
-		
-		$filename = static::$_baseDirectory . DIRECTORY_SEPARATOR 
-				  . $subDirectory . DIRECTORY_SEPARATOR 
-				  . $class . '.php';
-		
+		$filename = static::_getClassFilePath($className, static::$_frameworkRootDirectory);
 		include $filename;
  	}
+	
+	public static function loadApplicationClass($className)
+	{
+		$namespaceParts = explode("\\", $className);
+		$rootNamespace = array_shift($namespaceParts);
+			
+		if (!static::_isNamespaceMatchingDirectory($rootNamespace, 
+					static::$_applicationDirectoryName)) {
+			return;
+		}
+		
+		$filename = static::_getClassFilePath($className, static::$_applicationRootDirectory);
+		include $filename;
+	}
 	
 	public static function loadTemplate($name)
 	{
 		//assumes that the directory where the templates are located is 
-		//'template' and is under the base directory
-		$filename = static::$_baseDirectory . DIRECTORY_SEPARATOR 
+		//'template' and is under the root framework directory
+		$filename = static::$_frameworkRootDirectory . DIRECTORY_SEPARATOR 
 			  	  . 'templates' . DIRECTORY_SEPARATOR 
 			  	  . $name . '.php';
 			  
@@ -67,17 +90,56 @@ class Loader
 		return $template;
 	}
 	
-	public static function registerAutoload($directory = null)
+	public static function registerFrameworkLoader($directory = null)
 	{
 		if (!is_dir($directory)) {
 			throw new InvalidArgumentException("Invalid base directory");
 		}
 		
-		static::$_baseDirectory = $directory;
+		static::$_frameworkRootDirectory = $directory;
 		
 		$path = explode(DIRECTORY_SEPARATOR, $directory);
-		static::$_baseDirectoryName = strtolower(array_pop($path));
+		static::$_frameworkDirectoryName = strtolower(array_pop($path));
 		
-		spl_autoload_register(array(__CLASS__, 'loadClass'), true);
+		spl_autoload_register(array(__CLASS__, 'loadFrameworkClass'), true);
+	}
+	
+	public static function registerApplicationLoader($directory = null)
+	{
+		if (!is_dir($directory)) {
+			throw new InvalidArgumentException("Invalid base directory");
+		}
+		
+		static::$_applicationRootDirectory = $directory;
+		
+		$path = explode(DIRECTORY_SEPARATOR, $directory);
+		static::$_applicationDirectoryName = strtolower(array_pop($path));
+		
+		spl_autoload_register(array(__CLASS__, 'loadApplicationClass'), true);
+	}
+	
+	private static function _getClassFilePath($namespacedClass, $directory)
+	{
+		$namespaceParts = explode("\\", $namespacedClass);
+		$class = array_pop($namespaceParts);
+		
+		//remove the root namespace before constructing the subdirectory since
+		//the directory also contains it.
+		array_shift($namespaceParts);
+		$subDirectory = strtolower(implode(DIRECTORY_SEPARATOR, $namespaceParts));
+		
+		$filename = $directory . DIRECTORY_SEPARATOR 
+				  . $subDirectory . DIRECTORY_SEPARATOR 
+				  . $class . '.php';
+		
+		return $filename;
+	}
+	
+	private static function _isNamespaceMatchingDirectory($namespace, $directory)
+	{
+		if (strcasecmp($namespace, $directory) != 0) {
+			return false;
+		}
+		return true;
 	}
 }

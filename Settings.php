@@ -31,7 +31,9 @@ class Settings
 	
 	protected $_systemFilePath;
 	
-	protected $_enableAutoloader;
+	protected $_enableFrameworkLoader;
+	
+	protected $_enableApplicationLoader;
 	
 	protected $_enableCache;
 	
@@ -114,12 +116,20 @@ class Settings
 	}
 	
 	
-	public function isAutoloaderEnabled()
+	public function isFrameworkLoaderEnabled()
 	{
-		if (!isset($this->_enableAutoloader)) {
-			$this->_enableAutoloader = true;
+		if (!isset($this->_enableFrameworkLoader)) {
+			$this->_enableFrameworkLoader = true;
 		}
-		return $this->_enableAutoloader;
+		return $this->_enableFrameworkLoader;
+	}
+	
+	public function isApplicationLoaderEnabled()
+	{
+		if (!isset($this->_enableApplicationLoader)) {
+			$this->_enableApplicationLoader = true;
+		}
+		return $this->_enableApplicationLoader;
 	}
 	
 	public function isCacheEnabled()

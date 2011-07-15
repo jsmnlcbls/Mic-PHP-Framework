@@ -437,9 +437,14 @@ class System
 	
 	private function _intializeAutoloader()
 	{
-		if ($this->_settings->isAutoloaderEnabled()) {
+		if ($this->_settings->isFrameworkLoaderEnabled()) {
 			require __DIR__ . DIRECTORY_SEPARATOR . 'Loader.php';
-			Loader::registerAutoload($this->_settings->getMicDirectory());
+			Loader::registerFrameworkLoader($this->_settings->getMicDirectory());
+		}
+		
+		if ($this->_settings->isApplicationLoaderEnabled()) {
+			require_once __DIR__ . DIRECTORY_SEPARATOR . 'Loader.php';
+			Loader::registerApplicationLoader($this->_settings->getApplicationDirectory());
 		}
 	}
 	
