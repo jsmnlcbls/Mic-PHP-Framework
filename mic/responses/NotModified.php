@@ -22,7 +22,7 @@ namespace Mic\Responses;
 
 use Mic\Library\DefaultResponse;
 
-class Http304 extends DefaultResponse
+class NotModified extends DefaultResponse
 {
 	public function __construct()
 	{
