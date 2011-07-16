@@ -45,6 +45,18 @@ class Settings
 	protected $_applicationDirectory;
 	
 	/**
+	 * Holds the framework templates directory
+	 * @var String
+	 */
+	protected $_micTemplateDirectory;
+	
+	/**
+	 * Holds the application templates directory
+	 * @var String
+	 */
+	protected $_applicationTemplateDirectory;
+	
+	/**
 	 * Holds the base path for all URI
 	 * @var String
 	 */
@@ -116,7 +128,7 @@ class Settings
 	 * Set this to true if you are debugging.
 	 * @var Boolean
 	 */
-	protected $_throwException;
+	protected $_throwException = true;
 	
 	/**
 	 * Determines whether or not plugins should be invoked.
@@ -174,6 +186,32 @@ class Settings
 										 . 'application';
 		}
 		return $this->_applicationDirectory;
+	}
+	
+	/**
+	 * Returns the framework template directory
+	 * @return String
+	 */
+	public function getMicTemplateDirectory()
+	{
+		if (!isset($this->_micTemplateDirectory)) {
+			$this->_micTemplateDirectory = $this->getMicDirectory()
+										 . DIRECTORY_SEPARATOR . 'templates';
+		}
+		return $this->_micTemplateDirectory;
+	}
+	
+	/**
+	 * Returns the application template directory
+	 * @return void
+	 */
+	public function getApplicationTemplateDirectory()
+	{
+		if (!isset($this->_applicationTemplateDirectory)) {
+			$this->_applicationTemplateDirectory = $this->getApplicationDirectory()
+												 . DIRECTORY_SEPARATOR . 'templates';
+		}
+		return $this->_applicationTemplateDirectory;
 	}
 	
 	/**

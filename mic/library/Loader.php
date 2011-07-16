@@ -50,6 +50,35 @@ class Loader
 	 */
 	protected static $_frameworkRootDirectory;
 	
+	/**
+	 * Holds the framework template directory
+	 * @var String
+	 */
+	protected static $_frameworkTemplateDirectory;
+	
+	/**
+	 * Holds the framework templates file extension that is used
+	 * @var String
+	 */
+	protected static $_frameworkTemplateExtension;
+	
+	/**
+	 * Holds the application template directory
+	 * @var String
+	 */
+	protected static $_applicationTemplateDirectory;
+	
+	/**
+	 * Holds the application template file extension that is used
+	 * @var String
+	 */
+	protected static $_applicationTemplateExtension;
+	
+	/**
+	 * Autoloader method for framework classes
+	 * @param String $className Namespaced class name
+	 * @return void 
+	 */
 	public static function loadFrameworkClass($className)
 	{
 		$namespaceParts = explode("\\", $className);
@@ -64,6 +93,11 @@ class Loader
 		include $filename;
  	}
 	
+	/**
+	 * Autoloader method for application classes
+	 * @param String $className Namespaced class name
+	 * @return void
+	 */
 	public static function loadApplicationClass($className)
 	{
 		$namespaceParts = explode("\\", $className);
@@ -78,18 +112,40 @@ class Loader
 		include $filename;
 	}
 	
-	public static function loadTemplate($name)
+	/**
+	 * Returns a framework template
+	 * @param type $name the filename (without extension) of the framework template
+	 * that should be loaded
+	 * @return Template 
+	 */
+	public static function loadFrameworkTemplate($name)
 	{
-		//assumes that the directory where the templates are located is 
-		//'template' and is under the root framework directory
-		$filename = static::$_frameworkRootDirectory . DIRECTORY_SEPARATOR 
-			  	  . 'templates' . DIRECTORY_SEPARATOR 
-			  	  . $name . '.php';
+		$filename = static::$_frameworkTemplateDirectory . DIRECTORY_SEPARATOR 
+			  	  . $name . "." . static::$_frameworkTemplateExtension;
+		
+		$template = new Template($filename);
+		return $template;
+	}
+	
+	/**
+	 * Returns an application template
+	 * @param String $name the filename (without extension) of the application
+	 * template that should be loaded
+	 * @return Template 
+	 */
+	public static function loadApplicationTemplate($name)
+	{
+		$filename = static::$_applicationTemplateDirectory . DIRECTORY_SEPARATOR
+			  	  . $name . "." . static::$_applicationTemplateExtension;
 			  
 		$template = new Template($filename);
 		return $template;
 	}
 	
+	/**
+	 * Registers this method to autoload framework classes with spl_autoload_register
+	 * @param String $directory 
+	 */
 	public static function registerFrameworkLoader($directory = null)
 	{
 		if (!is_dir($directory)) {
@@ -104,6 +160,10 @@ class Loader
 		spl_autoload_register(array(__CLASS__, 'loadFrameworkClass'), true);
 	}
 	
+	/**
+	 * Register this method to autoload application classes with spl_autoload_register
+	 * @param String $directory 
+	 */
 	public static function registerApplicationLoader($directory = null)
 	{
 		if (!is_dir($directory)) {
@@ -118,6 +178,51 @@ class Loader
 		spl_autoload_register(array(__CLASS__, 'loadApplicationClass'), true);
 	}
 	
+	/**
+	 * Set the framework template directory and file extension to be used.
+	 * @param String $directory the template directory
+	 * @param String $extension the file extension
+	 */
+	public static function configureFrameworkTemplateLoader($directory, $extension = "php")
+	{
+		if (!is_dir($directory)) {
+			throw new InvalidArgumentException("Invalid template directory.");
+		}
+		
+		if (!is_string($extension) || empty($extension)) {
+			throw new InvalidArgumentException("Invalid file extension.");
+		}
+		
+		static::$_frameworkTemplateDirectory = $directory;
+		static::$_frameworkTemplateExtension = $extension;
+	}
+	
+	/**
+	 * Set the application template directory and file extension to be used.
+	 * @param String $directory the template directory 
+	 * @param String $extension the file extension
+	 */
+	public static function configureApplicationFrameworkLoader($directory, $extension = "php")
+	{
+		if (!is_dir($directory)) {
+			throw new InvalidArgumentException("Invalid template directory.");
+		}
+		
+		if (!is_string($extension) || empty($extension)) {
+			throw new InvalidArgumentException("Invalid file extension.");
+		}
+		
+		static::$_applicationTemplateDirectory = $directory;
+		static::$_applicationTemplateExtension = $extension;
+	}
+	
+	/**
+	 * Returns the corresponding file path of namespaced class by treating the 
+	 * namespace structure as a subdirectory under a root directory
+	 * @param type $namespacedClass the namespaced class to load
+	 * @param type $directory the root directory 
+	 * @return string 
+	 */
 	private static function _getClassFilePath($namespacedClass, $directory)
 	{
 		$namespaceParts = explode("\\", $namespacedClass);
@@ -135,6 +240,12 @@ class Loader
 		return $filename;
 	}
 	
+	/**
+	 * Determines whether a root namespace matches a root directory
+	 * @param type $namespace
+	 * @param type $directory
+	 * @return type 
+	 */
 	private static function _isNamespaceMatchingDirectory($namespace, $directory)
 	{
 		if (strcasecmp($namespace, $directory) != 0) {

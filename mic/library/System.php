@@ -440,11 +440,13 @@ class System
 		if ($this->_settings->isFrameworkLoaderEnabled()) {
 			require __DIR__ . DIRECTORY_SEPARATOR . 'Loader.php';
 			Loader::registerFrameworkLoader($this->_settings->getMicDirectory());
+			Loader::configureFrameworkTemplateLoader($this->_settings->getMicTemplateDirectory(), "php");
 		}
 		
 		if ($this->_settings->isApplicationLoaderEnabled()) {
 			require_once __DIR__ . DIRECTORY_SEPARATOR . 'Loader.php';
 			Loader::registerApplicationLoader($this->_settings->getApplicationDirectory());
+			Loader::configureApplicationFrameworkLoader($this->_settings->getApplicationTemplateDirectory(), "php");
 		}
 	}
 	
